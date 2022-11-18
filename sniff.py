@@ -2,8 +2,7 @@
 
 from scapy.all import *
 
-def forwading(pkt):
-        pkt.show()
-        return pkt
+def example(pkt):
+        pkt[IP].show()
 
-sniff(iface=['r-eth1','r-eth2'], prn=forwading)
+sniff(iface=['r-eth1','r-eth2'], prn=example)
