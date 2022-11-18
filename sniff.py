@@ -4,8 +4,7 @@ from scapy.all import *
 
 def example(pkt):
         #get the source and destination IP addresses
-        src = pkt[IP].src
-        dst = pkt[IP].dst
+        pkt.show()
         """if(dst == "10.2.2.1"):
                 print("Packet from source: " + src + " to destination: " + dst) 
                 pkt.show()
