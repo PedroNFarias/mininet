@@ -7,14 +7,8 @@ from scapy.layers import all
 from scapy import *
 
 def forwarder(pkt):
-        """source_mac_address = pkt[Ether].src
-        destination_mac_address = pkt[Ether].dst
-
-        destination_address = pkt[IP].dst
-        source_address = pkt[IP].src"""
-        print("Package sniffed")
         mac = getmacbyip(pkt[IP].dst)
-        pkt.dst = mac
-        sendp(pkt, iface="eth0")
+        pkt[Ether].dst = mac
+        sendp(pkt)
 
 sniff(iface=['r-eth1','r-eth2'], prn=forwarder)
