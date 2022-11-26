@@ -11,4 +11,4 @@ def forwarder(pkt):
         pkt[Ether].dst = mac
         sendp(pkt)
 
-sniff(iface=['r-eth1','r-eth2','h1-eth0','h2-eth0'], prn=forwarder)
+sniff(iface=['r-eth1','r-eth2'], prn=forwarder)
