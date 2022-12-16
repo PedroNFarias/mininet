@@ -3,56 +3,54 @@
 
 from scapy.all import *
 
-# Felipe Machado, Fernando Laydner e Luis Felipe Cavalheiro 
-
 tabelaDeRotas = []
 
-def nat(pkt):
-        #if IP not in pkt
+def nat(package):
+        #if IP not in package
 
-        if IP not in pkt:
+        if IP not in package:
                 return
-        if pkt[IP] == None:
+        if package[IP] == None:
                 return
 
-        pktInfo = []
-        pktInfo.append(pkt[IP].src) 
-        pktInfo.append(pkt[IP].dst)  
-        pkt.show()
+        packageInfo = []
+        packageInfo.append(package[IP].src) 
+        packageInfo.append(package[IP].dst)  
+        package.show()
 
-        if TCP in pkt:
-                pktInfo.append(pkt[TCP].sport) 
-                pktInfo.append(pkt[TCP].dport) 
-                pktInfo.append('TCP')
+        if TCP in package:
+                packageInfo.append(package[TCP].sport) 
+                packageInfo.append(package[TCP].dport) 
+                packageInfo.append('TCP')
 
-        elif UDP in pkt:
-                pktInfo.append(pkt[UDP].sport)
-                pktInfo.append(pkt[UDP].dport)
-                pktInfo.append('UDP')
+        elif UDP in package:
+                packageInfo.append(package[UDP].sport)
+                packageInfo.append(package[UDP].dport)
+                packageInfo.append('UDP')
 
         
-        if pkt.sniffed_on == 'r-eth0' and (pkt[IP].dst == '8.8.8.8' or pkt[IP].dst == '8.8.4.4') and (pkt[IP].src == '10.1.1.1' or pkt[IP].src == '10.1.1.2'):
-                pkt[IP].src = '8.8.254.254'
-                pkt[Ether].src = getmacbyip('8.8.254.254')
-                pkt.chksum = None
-                sendp(pkt, iface='r-eth1')
-                tabelaDeRotas.append(pktInfo)
+        if package.sniffed_on == 'r-eth0' and (package[IP].dst == '8.8.8.8' or package[IP].dst == '8.8.4.4') and (package[IP].src == '10.1.1.1' or package[IP].src == '10.1.1.2'):
+                package[IP].src = '8.8.254.254'
+                package[Ether].src = getmacbyip('8.8.254.254')
+                package.chksum = None
+                sendp(package, iface='r-eth1')
+                tabelaDeRotas.append(packageInfo)
 
-        elif pkt.sniffed_on == 'r-eth1' and (pkt[IP].src == '8.8.8.8' or pkt[IP].src == '8.8.4.4') and pkt[IP].dst == '8.8.254.254':
+        elif package.sniffed_on == 'r-eth1' and (package[IP].src == '8.8.8.8' or package[IP].src == '8.8.4.4') and package[IP].dst == '8.8.254.254':
                 for index, info in enumerate(tabelaDeRotas):
-                        if TCP in pkt:
-                                if (info[1] == pkt[IP].src and info[2] == pkt[TCP].dport and info[3] == pkt[TCP].sport and info[4] == 'TCP'):
-                                        pkt[IP].dst = info[0]
-                                        pkt[Ether].dst = getmacbyip(pkt[IP].dst)
-                                        pkt.chksum = None
-                                        sendp(pkt, iface='r-eth0')
+                        if TCP in package:
+                                if (info[1] == package[IP].src and info[2] == package[TCP].dport and info[3] == package[TCP].sport and info[4] == 'TCP'):
+                                        package[IP].dst = info[0]
+                                        package[Ether].dst = getmacbyip(package[IP].dst)
+                                        package.chksum = None
+                                        sendp(package, iface='r-eth0')
                                         tabelaDeRotas.pop(index)
-                        elif UDP in pkt:
-                                if (info[1] == pkt[IP].src and info[2] == pkt[UDP].dport and info[3] == pkt[UDP].sport and info[4] == 'UDP'):
-                                        pkt[IP].dst = info[0]
-                                        pkt[Ether].dst = getmacbyip(pkt[IP].dst)
-                                        pkt.chksum = None
-                                        sendp(pkt, iface='r-eth0')
+                        elif UDP in package:
+                                if (info[1] == package[IP].src and info[2] == package[UDP].dport and info[3] == package[UDP].sport and info[4] == 'UDP'):
+                                        package[IP].dst = info[0]
+                                        package[Ether].dst = getmacbyip(package[IP].dst)
+                                        package.chksum = None
+                                        sendp(package, iface='r-eth0')
                                         tabelaDeRotas.pop(index)
 
 sniff(iface=["r-eth0","r-eth1"], prn=nat) 
