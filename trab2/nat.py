@@ -53,7 +53,4 @@ def nat(package):
                                         sendp(package, iface='r-eth0')
                                         tabelaDeEndrerecos.pop(index)
 
-sniff(iface=["r-eth0","r-eth1"], prn=nat) 
-
-
-
+sniff(iface=["r-eth0","r-eth1"], prn=nat)
