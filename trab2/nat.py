@@ -16,7 +16,7 @@ def nat(package):
         packageInfo = []
         packageInfo.append(package[IP].src) 
         packageInfo.append(package[IP].dst)  
-        package.show()
+        #package.show()
 
         if TCP in package:
                 packageInfo.append(package[TCP].sport) 
