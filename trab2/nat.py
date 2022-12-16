@@ -3,7 +3,7 @@
 
 from scapy.all import *
 
-tabelaDeRotas = []
+tabelaDeEndrerecos = []
 
 def nat(package):
         #if IP not in package
@@ -34,24 +34,24 @@ def nat(package):
                 package[Ether].src = getmacbyip('8.8.254.254')
                 package.chksum = None
                 sendp(package, iface='r-eth1')
-                tabelaDeRotas.append(packageInfo)
+                tabelaDeEndrerecos.append(packageInfo)
 
         elif package.sniffed_on == 'r-eth1' and (package[IP].src == '8.8.8.8' or package[IP].src == '8.8.4.4') and package[IP].dst == '8.8.254.254':
-                for index, info in enumerate(tabelaDeRotas):
+                for index, info in enumerate(tabelaDeEndrerecos):
                         if TCP in package:
                                 if (info[1] == package[IP].src and info[2] == package[TCP].dport and info[3] == package[TCP].sport and info[4] == 'TCP'):
                                         package[IP].dst = info[0]
                                         package[Ether].dst = getmacbyip(package[IP].dst)
                                         package.chksum = None
                                         sendp(package, iface='r-eth0')
-                                        tabelaDeRotas.pop(index)
+                                        tabelaDeEndrerecos.pop(index)
                         elif UDP in package:
                                 if (info[1] == package[IP].src and info[2] == package[UDP].dport and info[3] == package[UDP].sport and info[4] == 'UDP'):
                                         package[IP].dst = info[0]
                                         package[Ether].dst = getmacbyip(package[IP].dst)
                                         package.chksum = None
                                         sendp(package, iface='r-eth0')
-                                        tabelaDeRotas.pop(index)
+                                        tabelaDeEndrerecos.pop(index)
 
 sniff(iface=["r-eth0","r-eth1"], prn=nat) 
 
